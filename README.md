@@ -6,7 +6,7 @@ Real-time video streaming + YOLO object detection + lightweight tracking, with z
 
 ## Quick start
 ```bash
-git clone <your-repo-url> SentinelCam
+git clone https://github.com/Kyaputan/SentinelCam.git
 cd SentinelCam
 
 # (Optional) create venv
