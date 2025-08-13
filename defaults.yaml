@@ -1,0 +1,15 @@
+app:
+  name: "SentinelCam"
+input:
+  source: "0"   
+  width: 640
+  height: 640
+model:
+  weights: "model/yolov11ื.pt"
+  conf: 0.6
+  iou: 0.6
+output:
+  show: true
+  save_video: "recordings/"
+  save_image: "snapshots/"
+
