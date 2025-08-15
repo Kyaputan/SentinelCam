@@ -1,10 +1,3 @@
-
-# -*- coding: utf-8 -*-
-"""
-Central configuration for the streaming + YOLO app.
-Adjust values here instead of editing code elsewhere.
-"""
-
 # Model & stream
 model_name: str = "yolo11n"       # weights file in ./models/<model_name>.pt
 rtsp_stream = 0                   # 0 for default webcam, or RTSP/HTTP URL string
@@ -72,7 +65,7 @@ double_click_threshold_ms = 300
 replay_buffer_max_size = 300      # ~10 seconds @30fps
 
 # Files
-labels_path = "../db/target.txt"     # will be loaded by utils.load_labels()
+labels_path = "./db/target.txt"     # will be loaded by utils.load_labels()
 
 # Window name (derived from stream in main if left None)
 window_name = None

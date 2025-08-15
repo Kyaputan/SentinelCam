@@ -6,7 +6,7 @@ from config import (
     recording_directory, point_timeout, stationary_val, padding, double_click_threshold_ms,
     replay_buffer_max_size, labels_path, window_name, class_confidence
 )
-from utils import AppState, load_labels, ensure_dir, millis
+from utils import AppState, load_labels, ensure_dir, millis , write_labels
 from camera import make_capture, start_stream_loop
 from detection import Detector
 from ui_controls import toggle_fullscreen, reset_window_to_stream_resolution, mouse_callback
@@ -16,7 +16,7 @@ def main():
     # Setup directories
     ensure_dir(snapshot_directory)
     ensure_dir(recording_directory)
-
+    write_labels(model_name)
     # Init state
     labels, labels_index = load_labels(labels_path)
     state = AppState()
@@ -101,9 +101,7 @@ def main():
                 print("Exiting replay mode")
 
         elif key == ord('r'):
-            # กด r: toggle บันทึก
             if not state.recording:
-                # เริ่มบันทึก ใช้ขนาดภาพหลังประมวลผล (opsize) และ fps จากกล้อง
                 try:
                     start_recording(state, frame_size=opsize, fps=24, fourcc_str='mp4v')
                 except Exception as e:
@@ -112,12 +110,9 @@ def main():
                 stop_recording(state)
             with q.mutex: q.queue.clear()
             
-            
-            
         elif key == ord('s'):
-            # snapshot - save current frame
             ts = time.strftime("%Y%m%d_%H%M%S")
-            path = f"../{snapshot_directory}/snapshot_{ts}.jpg"
+            path = f"./{snapshot_directory}/snapshot_{ts}.jpg"
             cv2.imwrite(path, frame)
             print(f"Snapshot saved: {path}")
             with q.mutex: q.queue.clear()
@@ -150,7 +145,7 @@ def main():
                     'point_timeout': point_timeout,
                 })
 
-        write_frame(state, img)        # recording indicator
+        write_frame(state, img)     
         if state.recording:
             cv2.putText(img, "REC", (16, img.shape[0]-38), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,0), 2)
             cv2.putText(img, "REC", (16, img.shape[0]-38), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255), 2)

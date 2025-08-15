@@ -4,6 +4,7 @@ import os, time, cv2, math
 import numpy as np
 from dataclasses import dataclass, field
 from typing import Tuple, List
+from ultralytics import YOLO
 
 _font = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -84,40 +85,53 @@ def ensure_dir(path: str):
 
 @dataclass
 class AppState:
-    # window
-    window_name: str = "0"
+    # ==== CONFIG (auto) ====
+    model_name: str = "yolo11n"
+    rtsp_stream: any = 0
+    opsize: tuple = (640, 480)
+    topmost_window: bool = True
+    buffer: int = 512
+    min_confidence: float = 0.15
+    min_size: int = 20
+    yolo_skip_frames: int = 3
+    # ถ้า None = ให้ใช้ทุกคลาสจากโมเดล
+    visible_classes: list | None = None
+    # ถ้า None = ไม่ใช้ per-class threshold
+    class_confidence: dict | None = None
+    snapshot_directory: str = "snapshots"
+    recording_directory: str = "recordings"
+    point_timeout: int = 2500
+    stationary_val: int = 16
+    idle_reset: int = 3000
+    padding: int = 6
+    zoom_max_factor: float = 6.0
+    double_click_threshold_ms: int = 300
+    replay_buffer_max_size: int = 300
+    # labels_path ไม่จำเป็นอีกต่อไป
+    window_name: str = None
+
+    # ==== RUNTIME (เดิม) ====
     window_aspect_ratio: float = 4/3
-    original_window_size: Tuple[int,int] = (640,480)
+    original_window_size: tuple = (640, 480)
     fullscreen: bool = False
     topmost: bool = True
-
-    # stream sizes
-    streamsize: Tuple[int,int] = (0,0)
-    opsize: Tuple[int,int] = (640,480)
+    streamsize: tuple = (0, 0)
     hdstream: bool = False
-
-    # queues / fps
     frames: int = 0
     prev_frames: int = 0
     last_frame_ms: int = 0
     fps: int = 0
-
-    # flags
     loop: bool = True
     recording: bool = False
     military_mode: bool = False
     basic_stream_mode: bool = True
     replay_mode: bool = False
-
-    # zoom / pan
     zoom_factor: float = 1.0
     pan_x: int = 0
     pan_y: int = 0
     zoom_mode_active: bool = False
     zoom_pan_active: bool = False
     zoom_pan_pause_time_ms: int = 0
-
-    # draw rect
     drawing: bool = False
     dragging: bool = False
     draw_start_x: int = 0
@@ -126,24 +140,31 @@ class AppState:
     draw_end_y: int = 0
     drag_start_x: int = 0
     drag_start_y: int = 0
-
-    # tracking stats
     object_count_hist: list = field(default_factory=list)
     old_count: int = 0
     obj_break_ms: int = 0
     obj_idle_ms: int = 0
-
-    # replay
     replay_buffer: list = field(default_factory=list)
     replay_index: int = 0
     replay_last_flash_time_ms: int = 0
-
-    # cache
     cached_yolo_results: any = None
     yolo_frame_count: int = 0
-
-    recording: bool = False
     recording_writer: any = None
     recording_fps: int = 20
     recording_size: tuple = (640, 480)
     recording_path: str = ""
+    
+
+def write_labels(model_name):
+    print("Loading YOLO model...")
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    model_path = os.path.join(project_root, "models", f"{model_name}.pt")
+    model = YOLO(model_path)
+    names = model.names  # dict: {index: name}
+    with open("db/target.txt", "w", encoding="utf-8") as f:
+        for i in range(len(names)):
+            f.write(f"{names[i]}\n")
+    print("wrote db/target.txt")
+    
+if __name__ == "__main__":
+    write_labels("yolo11n")

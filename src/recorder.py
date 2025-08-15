@@ -1,5 +1,3 @@
-# recorder.py
-# -*- coding: utf-8 -*-
 import cv2, time
 from utils import ensure_dir
 from config import recording_directory
@@ -8,7 +6,7 @@ def start_recording(state, frame_size, fps=20, fourcc_str='mp4v'):
 
     ensure_dir(recording_directory)
     ts = time.strftime("%Y%m%d_%H%M%S")
-    path = f"../{recording_directory}/recording_{ts}.mp4"
+    path = f"./{recording_directory}/recording_{ts}.mp4"
 
     fourcc = cv2.VideoWriter_fourcc(*fourcc_str)
     writer = cv2.VideoWriter(path, fourcc, fps, frame_size)

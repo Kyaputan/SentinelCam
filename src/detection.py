@@ -1,5 +1,3 @@
-
-# -*- coding: utf-8 -*-
 import cv2, math, threading, copy
 import numpy as np
 from sklearn.cluster import DBSCAN
@@ -37,6 +35,8 @@ class Detector:
         t = threading.Thread(target=self._load_model, daemon=True)
         t.start()
 
+
+    
     def _load_model(self):
         print("Loading YOLO model...")
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
