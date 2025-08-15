@@ -26,10 +26,8 @@ def start_stream_loop(state, cap, q: queue.Queue):
             cap.release()
             cap = cv2.VideoCapture(state.window_name)
             continue
-        # replay buffer
         if not state.replay_mode:
             add_to_replay_buffer(state, frame)
-        # simple idle-based skip (mirrors original behavior)
         if (state.obj_idle_ms > 0) and (state.obj_idle_ms >= 3000) and (timestamp() - last_fskip >= 30):
             last_fskip = timestamp()
             with q.mutex:
