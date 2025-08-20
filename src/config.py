@@ -62,7 +62,7 @@ idle_reset = 3000
 padding = 6
 zoom_max_factor = 6.0
 double_click_threshold_ms = 300
-replay_buffer_max_size = 300      # ~10 seconds @30fps
+replay_buffer_max_size = 30 * 15      # ~15 seconds @30fps
 
 # Files
 labels_path = "./db/target.txt"     # will be loaded by utils.load_labels()
